@@ -7,11 +7,15 @@ import '../utils.dart';
 class AttendSheetApi {
   static final _gSheet = GSheets(credentials);
   static Worksheet? _attendSheet;
+  static late Spreadsheet spreadSheet;
 
-  static Future init() async {
-    final spreadSheet = await _gSheet.spreadsheet(spreadSheetId);
+  static Future init({String spreadSheetId = spreadSheetId}) async {
+    spreadSheet = await _gSheet.spreadsheet(spreadSheetId);
     _attendSheet = spreadSheet.worksheetByIndex(1);
   }
+
+  static List<String> get allWorkSheets =>
+      spreadSheet.sheets.map((e) => e.title).toList();
 
   static Future<List<String>> getAttenders() async {
     // await cleanTable();

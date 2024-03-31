@@ -1,4 +1,5 @@
 import 'package:attend_recorder/home/AttendScreen.dart';
+import 'package:attend_recorder/home/settings/SettingWidget.dart';
 import 'package:attend_recorder/users/UsersScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,7 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   var _selectedIndex = 0;
 
-  final options = const [AttendScreen(), UsersScreen()];
+  final options = const [AttendScreen(), UsersScreen(), SettingsWidget()];
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +26,11 @@ class _HomeWidgetState extends State<HomeWidget> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Users"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings), label: "Settings"),
         ],
         onTap: onIndexChanged,
+        currentIndex: _selectedIndex,
       ),
     );
   }

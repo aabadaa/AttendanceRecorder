@@ -1,12 +1,15 @@
 import 'package:attend_recorder/home/Home.dart';
-import 'package:flutter/material.dart';
+import 'package:attend_recorder/home/settings/SettingProvider.dart';
 import 'package:attend_recorder/sheetUtils/AttendSheetApi.dart';
+import 'package:attend_recorder/sheetUtils/SheetPref.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AttendSheetApi.init();
+  SheetPrefs.init();
   runApp(const MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +24,12 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomeWidget(),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (cxt) => SettingProvider(SheetPrefs()))
+        ],
+        child: const HomeWidget(),
+      ),
     );
   }
 }
