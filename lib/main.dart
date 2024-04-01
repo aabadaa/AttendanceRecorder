@@ -1,9 +1,7 @@
 import 'package:attend_recorder/DIModule.dart';
 import 'package:attend_recorder/home/Home.dart';
-import 'package:attend_recorder/home/settings/SettingProvider.dart';
 import 'package:attend_recorder/sheetUtils/SheetPref.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,12 +23,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (cxt) => getIt<SettingProvider>())
-        ],
-        child: const HomeWidget(),
-      ),
+      home: const HomeWidget(),
     );
   }
 }

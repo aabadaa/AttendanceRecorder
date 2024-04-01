@@ -1,7 +1,11 @@
 import 'package:attend_recorder/home/AttendScreen.dart';
+import 'package:attend_recorder/home/settings/SettingProvider.dart';
 import 'package:attend_recorder/home/settings/SettingWidget.dart';
 import 'package:attend_recorder/users/UsersScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../DIModule.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({super.key});
@@ -13,7 +17,13 @@ class HomeWidget extends StatefulWidget {
 class _HomeWidgetState extends State<HomeWidget> {
   var _selectedIndex = 0;
 
-  final options = const [AttendScreen(), UsersScreen(), SettingsWidget()];
+  final options = [
+    const AttendScreen(),
+    const UsersScreen(),
+    MultiProvider(providers: [
+      ChangeNotifierProvider(create: (cxt) => getIt<SettingProvider>())
+    ], child: const SettingsWidget()),
+  ];
 
   @override
   Widget build(BuildContext context) {
