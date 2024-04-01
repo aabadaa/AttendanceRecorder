@@ -1,6 +1,7 @@
-import 'package:attend_recorder/sheetUtils/AttendSheetApi.dart';
+import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
 import 'package:flutter/material.dart';
 
+import '../DIModule.dart';
 import '../models/User.dart';
 import 'UserWidget.dart';
 
@@ -12,6 +13,7 @@ class AttendScreen extends StatefulWidget {
 }
 
 class _AttendScreenState extends State<AttendScreen> {
+  late AttendRepo attendRepo;
   List<User> users = List.empty();
   bool _isLoading = false;
   DateTime selectedDay = DateTime.now();
@@ -20,7 +22,7 @@ class _AttendScreenState extends State<AttendScreen> {
     setState(() {
       _isLoading = true;
     });
-    users = await AttendSheetApi.getAttendersState(selectedDate);
+    users = await attendRepo.getAttendersState(selectedDate);
     setState(() {
       _isLoading = false;
     });
@@ -39,6 +41,7 @@ class _AttendScreenState extends State<AttendScreen> {
   @override
   void initState() {
     super.initState();
+    attendRepo = getIt();
     selectDate();
   }
 
@@ -54,8 +57,7 @@ class _AttendScreenState extends State<AttendScreen> {
               child: ListView.builder(
                 itemBuilder: (cxt, index) => AttenderWidget(
                   user: users[index],
-                  onClick: () =>
-                      AttendSheetApi.setState(users[index], selectedDay),
+                  onClick: () => attendRepo.setState(users[index], selectedDay),
                 ),
                 itemCount: users.length,
               ),

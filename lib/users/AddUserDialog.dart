@@ -1,7 +1,8 @@
+import 'package:attend_recorder/DIModule.dart';
+import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
 import 'package:flutter/material.dart';
 
 import '../models/User.dart';
-import '../sheetUtils/AttendSheetApi.dart';
 
 class AddUserDialog extends StatefulWidget {
   const AddUserDialog({super.key, required this.onAdd});
@@ -15,6 +16,13 @@ class AddUserDialog extends StatefulWidget {
 class _AddUserDialogState extends State<AddUserDialog> {
   final userNameController = TextEditingController();
   bool _isLoading = false;
+  late AttendRepo attendRepo;
+
+  @override
+  void initState() {
+    attendRepo = getIt();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -26,7 +34,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
     setState(() {
       _isLoading = true;
     });
-    await AttendSheetApi.addAttender(user);
+    await attendRepo.addAttender(user);
     widget.onAdd(user);
     Navigator.of(context, rootNavigator: true).pop(context);
   }

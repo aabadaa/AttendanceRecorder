@@ -1,8 +1,9 @@
+import 'package:attend_recorder/DIModule.dart';
+import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
 import 'package:attend_recorder/users/AddUserDialog.dart';
 import 'package:flutter/material.dart';
 
 import '../models/User.dart';
-import '../sheetUtils/AttendSheetApi.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -13,14 +14,14 @@ class UsersScreen extends StatefulWidget {
 
 class _UsersScreenState extends State<UsersScreen> {
   List<User> users = List.empty();
-
   bool _isLoading = false;
+  late AttendRepo attendRepo;
 
   Future<void> getUsers() async {
     setState(() {
       _isLoading = true;
     });
-    users = await AttendSheetApi.getAttenders().then(
+    users = await attendRepo.getAttenders().then(
         (value) => Future.value(value.map((e) => User(name: e)).toList()));
 
     setState(() {
@@ -31,6 +32,7 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
+    attendRepo = getIt();
     getUsers();
   }
 
@@ -42,7 +44,7 @@ class _UsersScreenState extends State<UsersScreen> {
         actions: [
           ElevatedButton(
             onPressed: () {
-              AttendSheetApi.removeAttender(user);
+              attendRepo.removeAttender(user);
               Navigator.of(cxt).pop();
             },
             child: const Text("Delete"),

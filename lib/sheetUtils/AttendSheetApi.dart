@@ -6,18 +6,29 @@ import '../utils.dart';
 
 class AttendSheetApi {
   static final _gSheet = GSheets(credentials);
-  static Worksheet? _attendSheet;
-  static late Spreadsheet spreadSheet;
+  Worksheet? _attendSheet;
+  final Spreadsheet spreadSheet;
 
-  static Future init({String spreadSheetId = spreadSheetId}) async {
-    spreadSheet = await _gSheet.spreadsheet(spreadSheetId);
-    _attendSheet = spreadSheet.worksheetByIndex(1);
+  static Future<AttendSheetApi?> create(String? spreadSheetId) async {
+    if (spreadSheetId == null) return Future.value(null);
+    final spreadSheet = await _gSheet.spreadsheet(spreadSheetId);
+    return Future(() => AttendSheetApi._(spreadSheet));
   }
 
-  static List<String> get allWorkSheets =>
+  AttendSheetApi._(this.spreadSheet);
+
+  setSheetLabel(String? sheetLabel) {
+    print("Hello set sheeet label");
+    if (sheetLabel != null) {
+      _attendSheet = spreadSheet.worksheetByTitle(sheetLabel);
+      print("Sed is done");
+    }
+  }
+
+  List<String> get allWorkSheets =>
       spreadSheet.sheets.map((e) => e.title).toList();
 
-  static Future<List<String>> getAttenders() async {
+  Future<List<String>> getAttenders() async {
     // await cleanTable();
     return _attendSheet!.values.row(1).then((list) {
       if (list.isNotEmpty) list.removeAt(0);
@@ -25,7 +36,7 @@ class AttendSheetApi {
     });
   }
 
-  static Future<List<User>> getAttendersState(DateTime dateTime) async {
+  Future<List<User>> getAttendersState(DateTime dateTime) async {
     print("getAttendersState");
     final allDates = await _attendSheet!.values.column(1).then((value) {
       value.removeAt(0);
@@ -62,11 +73,11 @@ class AttendSheetApi {
     return Future.value(out);
   }
 
-  static Future addAttender(User user) async {
+  Future addAttender(User user) async {
     _attendSheet!.values.appendColumn([user.name]);
   }
 
-  static Future removeAttender(User user) async {
+  Future removeAttender(User user) async {
     final attenders = await _attendSheet!.values.row(1);
     final attenderIndex = attenders.indexOf(user.name);
 
@@ -83,7 +94,7 @@ class AttendSheetApi {
     }
   }
 
-  static Future setState(User user, DateTime day) async {
+  Future setState(User user, DateTime day) async {
     print("setState");
     final userColumn = (await _attendSheet!.values.row(1)).indexOf(user.name);
     final dayRow =

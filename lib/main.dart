@@ -1,14 +1,15 @@
+import 'package:attend_recorder/DIModule.dart';
 import 'package:attend_recorder/home/Home.dart';
 import 'package:attend_recorder/home/settings/SettingProvider.dart';
-import 'package:attend_recorder/sheetUtils/AttendSheetApi.dart';
 import 'package:attend_recorder/sheetUtils/SheetPref.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await AttendSheetApi.init();
-  SheetPrefs.init();
+  await SheetPrefs.init();
+  await setup();
+
   runApp(const MyApp());
 }
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       ),
       home: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (cxt) => SettingProvider(SheetPrefs()))
+          ChangeNotifierProvider(create: (cxt) => getIt<SettingProvider>())
         ],
         child: const HomeWidget(),
       ),
