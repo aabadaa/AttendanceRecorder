@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../sheetUtils/Credentials.dart';
+import '../../data/sheetUtils/Credentials.dart';
 import 'SettingProvider.dart';
 
 class SettingsWidget extends StatefulWidget {

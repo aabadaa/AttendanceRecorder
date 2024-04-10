@@ -1,8 +1,9 @@
-import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
+import 'package:attend_recorder/domain/models/User.dart';
+import 'package:attend_recorder/domain/useCase/GetAllAttendStateUseCase.dart';
+import 'package:attend_recorder/domain/useCase/SetAttendStateUseCase.dart';
 import 'package:flutter/material.dart';
 
 import '../DIModule.dart';
-import '../models/User.dart';
 import 'UserWidget.dart';
 
 class AttendScreen extends StatefulWidget {
@@ -13,8 +14,10 @@ class AttendScreen extends StatefulWidget {
 }
 
 class _AttendScreenState extends State<AttendScreen> {
-  late AttendRepo attendRepo;
-  List<User> users = List.empty();
+  late GetAllAttendStateUseCase getAllAttendStateUseCase;
+  late SetAttendStateUseCase setAttendStateUseCase;
+
+  List<AttenderState> users = List.empty();
   bool _isLoading = false;
   DateTime selectedDay = DateTime.now();
 
@@ -22,7 +25,7 @@ class _AttendScreenState extends State<AttendScreen> {
     setState(() {
       _isLoading = true;
     });
-    users = await attendRepo.getAttendersState(selectedDate);
+    users = await getAllAttendStateUseCase.execute(selectedDate);
     setState(() {
       _isLoading = false;
     });
@@ -41,7 +44,7 @@ class _AttendScreenState extends State<AttendScreen> {
   @override
   void initState() {
     super.initState();
-    attendRepo = getIt();
+    getAllAttendStateUseCase = getIt();
     selectDate();
   }
 
@@ -57,7 +60,8 @@ class _AttendScreenState extends State<AttendScreen> {
               child: ListView.builder(
                 itemBuilder: (cxt, index) => AttenderWidget(
                   user: users[index],
-                  onClick: () => attendRepo.setState(users[index], selectedDay),
+                  onClick: () =>
+                      setAttendStateUseCase.execute(users[index], selectedDay),
                 ),
                 itemCount: users.length,
               ),

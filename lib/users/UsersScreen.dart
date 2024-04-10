@@ -1,9 +1,10 @@
 import 'package:attend_recorder/DIModule.dart';
-import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
+import 'package:attend_recorder/domain/useCase/GetAllAttendersUseCase.dart';
+import 'package:attend_recorder/domain/useCase/RemoeAttenderUseCase.dart';
 import 'package:attend_recorder/users/AddUserDialog.dart';
 import 'package:flutter/material.dart';
 
-import '../models/User.dart';
+import '../domain/models/User.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -13,16 +14,17 @@ class UsersScreen extends StatefulWidget {
 }
 
 class _UsersScreenState extends State<UsersScreen> {
-  List<User> users = List.empty();
+  List<AttenderState> users = List.empty();
   bool _isLoading = false;
-  late AttendRepo attendRepo;
+  late RemoveAttenderUseCase removeAttenderUseCase;
+  late GetAllAttendersUseCase getAllAttendersUseCase;
 
   Future<void> getUsers() async {
     setState(() {
       _isLoading = true;
     });
-    users = await attendRepo.getAttenders().then(
-        (value) => Future.value(value.map((e) => User(name: e)).toList()));
+    users = await getAllAttendersUseCase.execute().then((value) =>
+        Future.value(value.map((e) => AttenderState(name: e)).toList()));
 
     setState(() {
       _isLoading = false;
@@ -32,19 +34,20 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
-    attendRepo = getIt();
+    getAllAttendersUseCase = getIt();
+    removeAttenderUseCase = getIt();
     getUsers();
   }
 
-  void _onUserClicked(User user) {
+  void _onUserClicked(String user) {
     showDialog(
       context: context,
       builder: (cxt) => AlertDialog(
-        title: Text("Remove: ${user.name}"),
+        title: Text("Remove: $user"),
         actions: [
           ElevatedButton(
             onPressed: () {
-              attendRepo.removeAttender(user);
+              removeAttenderUseCase.execute(user);
               Navigator.of(cxt).pop();
             },
             child: const Text("Delete"),
@@ -67,7 +70,7 @@ class _UsersScreenState extends State<UsersScreen> {
           : ListView.builder(
               itemBuilder: (_, index) => TextButton(
                 child: Text(users[index].name),
-                onPressed: () => {_onUserClicked(users[index])},
+                onPressed: () => {_onUserClicked(users[index].name)},
               ),
               itemCount: users.length,
             ),

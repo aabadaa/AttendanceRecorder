@@ -1,8 +1,8 @@
-import 'package:attend_recorder/models/User.dart';
 import 'package:gsheets/gsheets.dart';
 
+import '../../domain/models/User.dart';
+import '../../utils.dart';
 import '../sheetUtils/Credentials.dart';
-import '../utils.dart';
 
 class AttendSheetApi {
   static final _gSheet = GSheets(credentials);
@@ -36,7 +36,7 @@ class AttendSheetApi {
     });
   }
 
-  Future<List<User>> getAttendersState(DateTime dateTime) async {
+  Future<List<AttenderState>> getAttendersState(DateTime dateTime) async {
     print("getAttendersState");
     final allDates = await _attendSheet!.values.column(1).then((value) {
       value.removeAt(0);
@@ -64,22 +64,22 @@ class AttendSheetApi {
       return Future.value(list.map((e) => getTimeFromString(e)).toList());
     });
     print("states $states\n ${states.length}");
-    final out = <User>[];
+    final out = <AttenderState>[];
     for (int i = 0; i < users.length; i++) {
       final userName = users[i];
       final userState = i >= states.length ? null : states[i];
-      out.add(User(name: userName, attendDate: userState));
+      out.add(AttenderState(name: userName, attendDate: userState));
     }
     return Future.value(out);
   }
 
-  Future addAttender(User user) async {
-    _attendSheet!.values.appendColumn([user.name]);
+  Future addAttender(String user) async {
+    _attendSheet!.values.appendColumn([user]);
   }
 
-  Future removeAttender(User user) async {
+  Future removeAttender(String user) async {
     final attenders = await _attendSheet!.values.row(1);
-    final attenderIndex = attenders.indexOf(user.name);
+    final attenderIndex = attenders.indexOf(user);
 
     if (attenderIndex < 0) return;
 
@@ -94,7 +94,7 @@ class AttendSheetApi {
     }
   }
 
-  Future setState(User user, DateTime day) async {
+  Future setState(AttenderState user, DateTime day) async {
     print("setState");
     final userColumn = (await _attendSheet!.values.row(1)).indexOf(user.name);
     final dayRow =

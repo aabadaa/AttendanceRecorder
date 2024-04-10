@@ -1,13 +1,11 @@
 import 'package:attend_recorder/DIModule.dart';
-import 'package:attend_recorder/sheetUtils/AttendRepo.dart';
+import 'package:attend_recorder/domain/useCase/AddAttenderUseCase.dart';
 import 'package:flutter/material.dart';
-
-import '../models/User.dart';
 
 class AddUserDialog extends StatefulWidget {
   const AddUserDialog({super.key, required this.onAdd});
 
-  final void Function(User) onAdd;
+  final void Function(String) onAdd;
 
   @override
   State<AddUserDialog> createState() => _AddUserDialogState();
@@ -16,11 +14,11 @@ class AddUserDialog extends StatefulWidget {
 class _AddUserDialogState extends State<AddUserDialog> {
   final userNameController = TextEditingController();
   bool _isLoading = false;
-  late AttendRepo attendRepo;
+  late AddAttenderUseCase addAttenderUseCase;
 
   @override
   void initState() {
-    attendRepo = getIt();
+    addAttenderUseCase = getIt();
     super.initState();
   }
 
@@ -30,11 +28,11 @@ class _AddUserDialogState extends State<AddUserDialog> {
     super.dispose();
   }
 
-  Future _addUser(User user) async {
+  Future _addUser(String user) async {
     setState(() {
       _isLoading = true;
     });
-    await attendRepo.addAttender(user);
+    await addAttenderUseCase.execute(user);
     widget.onAdd(user);
     Navigator.of(context, rootNavigator: true).pop(context);
   }
@@ -57,7 +55,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
                       children: [
                         OutlinedButton(
                           onPressed: () => {
-                            _addUser(User(name: userNameController.text)),
+                            _addUser(userNameController.text),
                           },
                           child: const Text("Add"),
                         ),

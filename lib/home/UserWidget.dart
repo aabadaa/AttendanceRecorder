@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../models/User.dart';
+import '../domain/models/User.dart';
 import '../utils.dart';
 
 class AttenderWidget extends StatefulWidget {
   const AttenderWidget({super.key, required this.user, required this.onClick});
 
-  final User user;
+  final AttenderState user;
   final void Function() onClick;
 
   @override
