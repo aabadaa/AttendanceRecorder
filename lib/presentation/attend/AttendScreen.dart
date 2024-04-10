@@ -3,8 +3,8 @@ import 'package:attend_recorder/domain/useCase/GetAllAttendStateUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetAttendStateUseCase.dart';
 import 'package:flutter/material.dart';
 
-import '../DIModule.dart';
-import 'UserWidget.dart';
+import '../../DIModule.dart';
+import 'AttenderWidget.dart';
 
 class AttendScreen extends StatefulWidget {
   const AttendScreen({super.key});
@@ -19,7 +19,7 @@ class _AttendScreenState extends State<AttendScreen> {
 
   List<AttenderState> users = List.empty();
   bool _isLoading = false;
-  DateTime selectedDay = DateTime.now();
+  DateTime? selectedDay;
 
   Future<void> getAttendersState(DateTime selectedDate) async {
     setState(() {
@@ -38,38 +38,47 @@ class _AttendScreenState extends State<AttendScreen> {
         lastDate: DateTime.now(),
         context: context);
     selectedDay = selectedDate ?? selectedDay;
-    getAttendersState(selectedDay);
+    if (selectedDay != null) {
+      getAttendersState(selectedDay!);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please select a day"),
+        ),
+      );
+    }
   }
 
   @override
   void initState() {
     super.initState();
     getAllAttendStateUseCase = getIt();
-    selectDate();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _isLoading
-        ? const Center(
-            child: Placeholder(),
-          )
-        : Scaffold(
-            body: RefreshIndicator(
-              onRefresh: () => getAttendersState(selectedDay),
-              child: ListView.builder(
-                itemBuilder: (cxt, index) => AttenderWidget(
-                  user: users[index],
-                  onClick: () =>
-                      setAttendStateUseCase.execute(users[index], selectedDay),
-                ),
-                itemCount: users.length,
-              ),
+    if (_isLoading) {
+      return const Center(
+        child: Placeholder(),
+      );
+    } else {
+      return Scaffold(
+        body: RefreshIndicator(
+          onRefresh: () => getAttendersState(selectedDay!),
+          child: ListView.builder(
+            itemBuilder: (cxt, index) => AttenderWidget(
+              user: users[index],
+              onClick: () =>
+                  setAttendStateUseCase.execute(users[index], selectedDay!),
             ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: selectDate,
-              label: const Text("Select Date"),
-            ),
-          );
+            itemCount: users.length,
+          ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: selectDate,
+          label: const Text("Select Date"),
+        ),
+      );
+    }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:attend_recorder/DIModule.dart';
 import 'package:attend_recorder/domain/useCase/GetAllAttendersUseCase.dart';
 import 'package:attend_recorder/domain/useCase/RemoeAttenderUseCase.dart';
-import 'package:attend_recorder/users/AddUserDialog.dart';
 import 'package:flutter/material.dart';
 
-import '../domain/models/User.dart';
+import '../../domain/models/User.dart';
+import 'AddUserDialog.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});

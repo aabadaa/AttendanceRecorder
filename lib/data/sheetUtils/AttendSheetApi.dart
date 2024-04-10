@@ -18,10 +18,8 @@ class AttendSheetApi {
   AttendSheetApi._(this.spreadSheet);
 
   setSheetLabel(String? sheetLabel) {
-    print("Hello set sheeet label");
     if (sheetLabel != null) {
       _attendSheet = spreadSheet.worksheetByTitle(sheetLabel);
-      print("Sed is done");
     }
   }
 

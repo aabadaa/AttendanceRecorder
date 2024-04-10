@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../domain/models/User.dart';
-import '../utils.dart';
+import '../../domain/models/User.dart';
+import '../../utils.dart';
 
 class AttenderWidget extends StatefulWidget {
   const AttenderWidget({super.key, required this.user, required this.onClick});

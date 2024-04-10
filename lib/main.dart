@@ -1,13 +1,13 @@
 import 'package:attend_recorder/DIModule.dart';
-import 'package:attend_recorder/home/Home.dart';
+import 'package:attend_recorder/presentation/home/Home.dart';
 import 'package:flutter/material.dart';
 
 import 'data/sheetUtils/SheetPref.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await SheetPrefs.init();
   await setup();
+  WidgetsFlutterBinding.ensureInitialized();
 
   runApp(const MyApp());
 }

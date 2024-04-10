@@ -18,6 +18,8 @@ class _SettingsWidgetState extends State<SettingsWidget> {
   @override
   void initState() {
     super.initState();
+
+    settingProvider = Provider.of(context);
   }
 
   @override
@@ -33,7 +35,6 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    settingProvider = Provider.of(context);
     sheetIdController.text = settingProvider.sheetId ?? "";
     return Stack(
       children: [

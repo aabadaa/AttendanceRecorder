@@ -8,7 +8,7 @@ import 'package:attend_recorder/domain/useCase/RemoeAttenderUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetAttendStateUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetSheetIdUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetWorkSheetLabelUseCase.dart';
-import 'package:attend_recorder/home/settings/SettingProvider.dart';
+import 'package:attend_recorder/presentation/settings/SettingProvider.dart';
 import 'package:get_it/get_it.dart';
 
 import 'data/repository/AttendRepo.dart';
