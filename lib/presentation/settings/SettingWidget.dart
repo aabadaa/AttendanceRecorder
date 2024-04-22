@@ -1,8 +1,8 @@
+import 'package:attend_recorder/presentation/settings/SettingProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/sheetUtils/Credentials.dart';
-import 'SettingProvider.dart';
 
 class SettingsWidget extends StatefulWidget {
   const SettingsWidget({super.key});
@@ -13,13 +13,10 @@ class SettingsWidget extends StatefulWidget {
 
 class _SettingsWidgetState extends State<SettingsWidget> {
   final sheetIdController = TextEditingController();
-  late SettingProvider settingProvider;
 
   @override
   void initState() {
     super.initState();
-
-    settingProvider = Provider.of(context);
   }
 
   @override
@@ -35,7 +32,10 @@ class _SettingsWidgetState extends State<SettingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    sheetIdController.text = settingProvider.sheetId ?? "";
+    final settingProvider = Provider.of<SettingProvider>(context);
+
+    sheetIdController.text = settingProvider.sheetId
+        .when(success: (data) => data ?? "", idle: () => "")!;
     return Stack(
       children: [
         Center(

@@ -3,7 +3,7 @@ enum ResultStatus { success, loading, error, idle }
 class ResultWrapper<T> {
   final ResultStatus status;
   final T? data;
-  final String? error;
+  final dynamic error;
 
   ResultWrapper._(this.status, this.data, this.error);
 
@@ -13,25 +13,26 @@ class ResultWrapper<T> {
   factory ResultWrapper.loading() =>
       ResultWrapper._(ResultStatus.loading, null, null);
 
-  factory ResultWrapper.error(String error) =>
+  factory ResultWrapper.error(dynamic error) =>
       ResultWrapper._(ResultStatus.error, null, error);
 
   factory ResultWrapper.idle() =>
       ResultWrapper._(ResultStatus.idle, null, null);
 
-  void when(
-      {String Function(dynamic data)? success,
-      String Function()? loading,
-      String Function(dynamic error)? error,
-      String Function()? idle}) {
+  RETURN_TYPE? when<RETURN_TYPE>(
+      {RETURN_TYPE Function(T? data)? success,
+      RETURN_TYPE Function()? loading,
+      RETURN_TYPE Function(dynamic error)? error,
+      RETURN_TYPE Function()? idle}) {
     if (success != null && status == ResultStatus.success) {
-      success(data);
+      return success(data);
     } else if (loading != null && status == ResultStatus.loading) {
-      loading();
+      return loading();
     } else if (error != null && status == ResultStatus.error) {
-      error(error);
+      return error(error);
     } else if (idle != null) {
-      idle();
+      return idle();
     }
+    return null;
   }
 }

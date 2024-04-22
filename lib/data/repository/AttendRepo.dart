@@ -1,4 +1,6 @@
 import 'package:attend_recorder/data/sheetUtils/SheetPref.dart';
+import 'package:attend_recorder/domain/exception/NotProvidedSheetIdException.dart';
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:gsheets/gsheets.dart';
 
 import '../../domain/models/User.dart';
@@ -12,15 +14,16 @@ class AttendRepoImpl extends AttendRepository {
 
   _init() async {
     _attendSheetApi = await AttendSheetApi.create(_sheetPrefs.sheetId);
-    _attendSheetApi!.setSheetLabel(_sheetPrefs.workSheetLabel);
+    _attendSheetApi?.setSheetLabel(_sheetPrefs.workSheetLabel);
   }
 
   final SheetPrefs _sheetPrefs;
   late AttendSheetApi? _attendSheetApi;
 
   AttendSheetApi get _safeAttendSheet {
-    if (_attendSheetApi == null)
+    if (_attendSheetApi == null) {
       throw Exception("Please add sheet id in settings");
+    }
     return _attendSheetApi!;
   }
 
@@ -43,21 +46,62 @@ class AttendRepoImpl extends AttendRepository {
   }
 
   @override
-  String? get sheetId => _sheetPrefs.sheetId;
+  ResultWrapper<String> get sheetId {
+    try {
+      final out = _sheetPrefs.sheetId;
+      if (out == null) {
+        return ResultWrapper.error(NotProvidedSheetIdException());
+      }
+      return ResultWrapper.success(out);
+    } catch (e) {
+      return ResultWrapper.error(e);
+    }
+  }
 
   @override
-  String? get workSheetLabel => _sheetPrefs.workSheetLabel;
+  ResultWrapper<String> get workSheetLabel {
+    try {
+      final out = _sheetPrefs.workSheetLabel;
+      if (out == null) {
+        return ResultWrapper.error(NotProvidedWorkSheetLabelException());
+      }
+      return ResultWrapper.success(out);
+    } catch (e) {
+      return ResultWrapper.error(e);
+    }
+  }
 
   //sheet api
   @override
-  List<String> get allWorkSheets => _safeAttendSheet.allWorkSheets;
+  ResultWrapper<List<String>> get allWorkSheets {
+    try {
+      final out = _safeAttendSheet.allWorkSheets;
+      return ResultWrapper.success(out);
+    } catch (e) {
+      return ResultWrapper.error(e);
+    }
+  }
 
   @override
-  Future<List<String>> getAttenders() async => _safeAttendSheet.getAttenders();
+  Future<ResultWrapper<List<String>>> getAttenders() async {
+    try {
+      final out = await _safeAttendSheet.getAttenders();
+      return ResultWrapper.success(out);
+    } catch (e) {
+      return ResultWrapper.error(e);
+    }
+  }
 
   @override
-  Future<List<AttenderState>> getAttendersState(DateTime day) async =>
-      _safeAttendSheet.getAttendersState(day);
+  Future<ResultWrapper<List<AttenderState>>> getAttendersState(
+      DateTime day) async {
+    try {
+      final out = await _safeAttendSheet.getAttendersState(day);
+      return ResultWrapper.success(out);
+    } catch (e) {
+      return ResultWrapper.error(e);
+    }
+  }
 
   @override
   addAttender(String user) async => _safeAttendSheet.addAttender(user);

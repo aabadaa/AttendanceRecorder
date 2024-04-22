@@ -10,7 +10,8 @@ class AttendSheetApi {
   final Spreadsheet spreadSheet;
 
   static Future<AttendSheetApi?> create(String? spreadSheetId) async {
-    if (spreadSheetId == null) return Future.value(null);
+    if (spreadSheetId == null || spreadSheetId.isEmpty)
+      return Future.value(null);
     final spreadSheet = await _gSheet.spreadsheet(spreadSheetId);
     return Future(() => AttendSheetApi._(spreadSheet));
   }

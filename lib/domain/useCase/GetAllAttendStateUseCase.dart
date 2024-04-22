@@ -1,4 +1,5 @@
 import 'package:attend_recorder/domain/models/User.dart';
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 
 import '../repository/AttendanceRepo.dart';
 
@@ -7,6 +8,6 @@ class GetAllAttendStateUseCase {
 
   final AttendRepository attendRepo;
 
-  Future<List<AttenderState>> execute(DateTime day) =>
+  Future<ResultWrapper<List<AttenderState>>> execute(DateTime day) =>
       attendRepo.getAttendersState(day);
 }

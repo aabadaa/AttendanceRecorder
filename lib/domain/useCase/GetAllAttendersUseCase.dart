@@ -1,3 +1,5 @@
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
+
 import '../repository/AttendanceRepo.dart';
 
 class GetAllAttendersUseCase {
@@ -5,5 +7,5 @@ class GetAllAttendersUseCase {
 
   final AttendRepository attendRepo;
 
-  Future<List<String>> execute() => attendRepo.getAttenders();
+  Future<ResultWrapper<List<String>>> execute() => attendRepo.getAttenders();
 }

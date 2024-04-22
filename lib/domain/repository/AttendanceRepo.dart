@@ -1,19 +1,20 @@
 import '../models/User.dart';
+import '../utils/ResultWrapper.dart';
 
 abstract class AttendRepository {
   Future<void> setSheetId(String? sheetId);
 
   Future<void> setWorkSheetLabel(String? workSheetLabel);
 
-  String? get sheetId;
+  ResultWrapper<String> get sheetId;
 
-  String? get workSheetLabel;
+  ResultWrapper<String> get workSheetLabel;
 
-  List<String> get allWorkSheets;
+  ResultWrapper<List<String>> get allWorkSheets;
 
-  Future<List<String>> getAttenders();
+  Future<ResultWrapper<List<String>>> getAttenders();
 
-  Future<List<AttenderState>> getAttendersState(DateTime day);
+  Future<ResultWrapper<List<AttenderState>>> getAttendersState(DateTime day);
 
   Future<void> addAttender(String user);
 

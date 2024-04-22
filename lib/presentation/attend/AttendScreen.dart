@@ -1,6 +1,7 @@
 import 'package:attend_recorder/domain/models/User.dart';
 import 'package:attend_recorder/domain/useCase/GetAllAttendStateUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetAttendStateUseCase.dart';
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:flutter/material.dart';
 
 import '../../DIModule.dart';
@@ -17,7 +18,7 @@ class _AttendScreenState extends State<AttendScreen> {
   late GetAllAttendStateUseCase getAllAttendStateUseCase;
   late SetAttendStateUseCase setAttendStateUseCase;
 
-  List<AttenderState> users = List.empty();
+  ResultWrapper<List<AttenderState>> users = ResultWrapper.idle();
   bool _isLoading = false;
   DateTime? selectedDay;
 
@@ -63,17 +64,32 @@ class _AttendScreenState extends State<AttendScreen> {
       );
     } else {
       return Scaffold(
-        body: RefreshIndicator(
-          onRefresh: () => getAttendersState(selectedDay!),
-          child: ListView.builder(
-            itemBuilder: (cxt, index) => AttenderWidget(
-              user: users[index],
-              onClick: () =>
-                  setAttendStateUseCase.execute(users[index], selectedDay!),
-            ),
-            itemCount: users.length,
-          ),
-        ),
+        body: users.when(
+            success: (users) => RefreshIndicator(
+                  onRefresh: () => getAttendersState(selectedDay!),
+                  child: ListView.builder(
+                    itemBuilder: (cxt, index) => AttenderWidget(
+                      user: users![index],
+                      onClick: () => setAttendStateUseCase.execute(
+                          users[index], selectedDay!),
+                    ),
+                    itemCount: users?.length,
+                  ),
+                ),
+            loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            error: (error) => Center(
+                  child: Column(
+                    children: [
+                      Text(error.toString()),
+                      ElevatedButton(
+                          onPressed: () =>
+                              getAllAttendStateUseCase.execute(selectedDay!),
+                          child: const Text("Retry"))
+                    ],
+                  ),
+                )),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: selectDate,
           label: const Text("Select Date"),

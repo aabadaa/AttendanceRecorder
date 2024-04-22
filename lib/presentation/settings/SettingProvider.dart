@@ -5,6 +5,7 @@ import 'package:attend_recorder/domain/useCase/GetSheetIdUseCase.dart';
 import 'package:attend_recorder/domain/useCase/GetWorkSheetLabelUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetSheetIdUseCase.dart';
 import 'package:attend_recorder/domain/useCase/SetWorkSheetLabelUseCase.dart';
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:gsheets/gsheets.dart';
 
@@ -23,9 +24,9 @@ class SettingProvider with ChangeNotifier {
   final SetSheetIdUseCase _setSheetIdUseCase;
   final SetWorkSheetLabelUseCase _setWorkSheetLabelUseCase;
 
-  String? get sheetId => _getSheetIdUseCase.execute();
+  ResultWrapper<String> get sheetId => _getSheetIdUseCase.execute();
 
-  String? get workLabel => _getWorkSheetLabelUseCase.execute();
+  ResultWrapper<String> get workLabel => _getWorkSheetLabelUseCase.execute();
 
   List<String> _workLabels = List.empty();
 
@@ -35,20 +36,24 @@ class SettingProvider with ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  Future<String> setSheetId(String sheetId) async {
+  late Exception errorState;
+
+  setSheetId(String sheetId) async {
     _isLoading = true;
     notifyListeners();
     try {
       _setSheetIdUseCase.execute(sheetId);
+      _workLabels = _getAllWorkSheetUseCase.execute().when(
+            success: (data) => data ?? List.empty(),
+          )!;
     } on GSheetsException {
+      return Future.value(ResultWrapper.error(Exception("Permission denied")));
+    } catch (e) {
+      errorState = e as Exception;
+    } finally {
       _isLoading = false;
       notifyListeners();
-      return Future.value("Permission denied");
     }
-    _workLabels = _getAllWorkSheetUseCase.execute();
-    _isLoading = false;
-    notifyListeners();
-    return Future.value("Done");
   }
 
   Future<String> setSheetLabel(String sheetLabel) async {
