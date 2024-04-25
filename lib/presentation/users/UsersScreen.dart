@@ -20,9 +20,8 @@ class UsersScreen extends StatelessWidget {
                   ),
               success: (users) => ListView.builder(
                     itemBuilder: (_, index) => TextButton(
-                      child: Text(users[index].name),
-                      onPressed: () =>
-                          {_onUserClicked(context, users[index].name)},
+                      child: Text(users[index]),
+                      onPressed: () => {_onUserClicked(context, users[index])},
                     ),
                     itemCount: users.length,
                   )),

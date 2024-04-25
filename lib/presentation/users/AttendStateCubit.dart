@@ -6,7 +6,9 @@ import '../../domain/useCase/GetAllAttendersUseCase.dart';
 import '../../domain/useCase/RemoeAttenderUseCase.dart';
 
 class AttendStateCubit extends Cubit<ResultWrapper<List<String>>> {
-  AttendStateCubit() : super(ResultWrapper.idle());
+  AttendStateCubit() : super(ResultWrapper.idle()) {
+    getUsers();
+  }
 
   RemoveAttenderUseCase removeAttenderUseCase = getIt();
   GetAllAttendersUseCase getAllAttendersUseCase = getIt();
