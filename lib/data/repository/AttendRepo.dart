@@ -99,6 +99,7 @@ class AttendRepoImpl extends AttendRepository {
       final out = await _safeAttendSheet.getAttendersState(day);
       return ResultWrapper.success(out);
     } catch (e) {
+      print(e);
       return ResultWrapper.error(e);
     }
   }

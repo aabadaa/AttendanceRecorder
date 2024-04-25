@@ -15,8 +15,8 @@ class AttendScreen extends StatefulWidget {
 }
 
 class _AttendScreenState extends State<AttendScreen> {
-  late GetAllAttendStateUseCase getAllAttendStateUseCase;
-  late SetAttendStateUseCase setAttendStateUseCase;
+  GetAllAttendStateUseCase getAllAttendStateUseCase = getIt();
+  SetAttendStateUseCase setAttendStateUseCase = getIt();
 
   ResultWrapper<List<AttenderState>> users = ResultWrapper.idle();
   bool _isLoading = false;
@@ -27,6 +27,17 @@ class _AttendScreenState extends State<AttendScreen> {
       _isLoading = true;
     });
     users = await getAllAttendStateUseCase.execute(selectedDate);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  Future<void> changeAttenderState(AttenderState attenderState) async {
+    setState(() {
+      _isLoading = true;
+    });
+    await setAttendStateUseCase.execute(attenderState, selectedDay!);
+    users = await getAllAttendStateUseCase.execute(selectedDay!);
     setState(() {
       _isLoading = false;
     });
@@ -51,12 +62,6 @@ class _AttendScreenState extends State<AttendScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    getAllAttendStateUseCase = getIt();
-  }
-
-  @override
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Center(
@@ -70,8 +75,7 @@ class _AttendScreenState extends State<AttendScreen> {
                   child: ListView.builder(
                     itemBuilder: (cxt, index) => AttenderWidget(
                       user: users![index],
-                      onClick: () => setAttendStateUseCase.execute(
-                          users[index], selectedDay!),
+                      onClick: () => changeAttenderState(users[index]),
                     ),
                     itemCount: users?.length,
                   ),
@@ -84,8 +88,7 @@ class _AttendScreenState extends State<AttendScreen> {
                     children: [
                       Text(error.toString()),
                       ElevatedButton(
-                          onPressed: () =>
-                              getAllAttendStateUseCase.execute(selectedDay!),
+                          onPressed: () => getAttendersState(selectedDay!),
                           child: const Text("Retry"))
                     ],
                   ),
