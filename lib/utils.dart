@@ -21,9 +21,18 @@ DateTime? getDateFromNumber(int serializedValue) {
 
 DateTime? getTimeFromString(String dateTime) {
   if (dateTime.isEmpty) return null;
-  final formatter = DateFormat("hh:mm a");
-  final out = formatter.parse(dateTime);
-  return out;
+  List<String> formats = const [
+    'hh:mm a',
+    'hh:mm',
+  ];
+  for (String format in formats) {
+    try {
+      final formatter = DateFormat(format);
+      final out = formatter.parse(dateTime);
+      return out;
+    } catch (e) {}
+  }
+  throw const FormatException('Input did not match any supported format');
 }
 
 String getStringFromTime(DateTime dateTime) {
