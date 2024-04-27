@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../DIModule.dart';
+import '../../di/DIModule.dart';
 import '../attend/AttendScreen.dart';
 import '../settings/SettingProvider.dart';
 import '../settings/SettingWidget.dart';

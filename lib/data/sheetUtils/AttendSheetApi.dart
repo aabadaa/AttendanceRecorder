@@ -1,7 +1,7 @@
 import 'package:gsheets/gsheets.dart';
 
 import '../../domain/models/User.dart';
-import '../../utils.dart';
+import '../../domain/utils/utils.dart';
 import '../sheetUtils/Credentials.dart';
 
 class AttendSheetApi {
@@ -73,7 +73,7 @@ class AttendSheetApi {
   }
 
   Future addAttender(String user) async {
-    _attendSheet!.values.appendColumn([user]);
+    await _attendSheet!.values.appendColumn([user]);
   }
 
   Future removeAttender(String user) async {
@@ -88,8 +88,8 @@ class AttendSheetApi {
 
     for (int i = 0; i < lastColumn.length; i++) {
       final lastColumnValue = i >= lastColumn.length ? "" : lastColumn[i].value;
-      userColumn[i].post(lastColumnValue);
-      lastColumn[i].post("");
+      await userColumn[i].post(lastColumnValue);
+      await lastColumn[i].post("");
     }
   }
 

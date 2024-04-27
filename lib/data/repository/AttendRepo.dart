@@ -105,12 +105,35 @@ class AttendRepoImpl extends AttendRepository {
   }
 
   @override
-  addAttender(String user) async => _safeAttendSheet.addAttender(user);
+  addAttender(String user) async {
+    try {
+      await _safeAttendSheet.addAttender(user);
+      return Future(() => ResultWrapper.success(null));
+    } catch (e) {
+      print(e);
+      return Future(() => ResultWrapper.error(e));
+    }
+  }
 
   @override
-  removeAttender(String user) async => _safeAttendSheet.removeAttender(user);
+  removeAttender(String user) async {
+    try {
+      _safeAttendSheet.removeAttender(user);
+      return Future.value(ResultWrapper.success(null));
+    } catch (e) {
+      print(e);
+      return Future(() => ResultWrapper.error(e));
+    }
+  }
 
   @override
-  setState(AttenderState user, DateTime day) async =>
+  setState(AttenderState user, DateTime day) async {
+    try {
       _safeAttendSheet.setState(user, day);
+      return Future.value(ResultWrapper.success(null));
+    } catch (e) {
+      print(e);
+      return Future(() => ResultWrapper.error(e));
+    }
+  }
 }

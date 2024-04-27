@@ -1,10 +1,10 @@
 import 'package:attend_recorder/domain/models/User.dart';
-import 'package:attend_recorder/domain/useCase/GetAllAttendStateUseCase.dart';
-import 'package:attend_recorder/domain/useCase/SetAttendStateUseCase.dart';
 import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:flutter/material.dart';
 
-import '../../DIModule.dart';
+import '../../di/DIModule.dart';
+import '../../domain/useCase/attendUseCase/GetAllAttendStateUseCase.dart';
+import '../../domain/useCase/attendUseCase/SetAttendStateUseCase.dart';
 import 'AttenderWidget.dart';
 
 class AttendScreen extends StatefulWidget {

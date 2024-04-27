@@ -24,15 +24,21 @@ class ResultWrapper<T> {
       RETURN_TYPE Function()? loading,
       RETURN_TYPE Function(dynamic error)? error,
       RETURN_TYPE Function()? idle}) {
-    if (success != null && status == ResultStatus.success) {
+    if (success != null && isSuccess) {
       return success(data);
-    } else if (loading != null && status == ResultStatus.loading) {
+    } else if (loading != null && isLoading) {
       return loading();
-    } else if (error != null && status == ResultStatus.error) {
+    } else if (error != null && isError) {
       return error(error);
     } else if (idle != null) {
       return idle();
     }
     return null;
   }
+
+  bool get isSuccess => status == ResultStatus.success;
+
+  bool get isError => status == ResultStatus.error;
+
+  bool get isLoading => status == ResultStatus.loading;
 }

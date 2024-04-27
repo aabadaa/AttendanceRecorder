@@ -1,8 +1,8 @@
-import 'package:attend_recorder/DIModule.dart';
+import 'package:attend_recorder/di/DIModule.dart';
 import 'package:attend_recorder/presentation/home/Home.dart';
 import 'package:flutter/material.dart';
 
-import 'data/sheetUtils/SheetPref.dart';
+import '../data/sheetUtils/SheetPref.dart';
 
 Future<void> main() async {
   await SheetPrefs.init();

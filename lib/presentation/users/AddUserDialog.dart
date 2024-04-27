@@ -1,5 +1,6 @@
-import 'package:attend_recorder/DIModule.dart';
-import 'package:attend_recorder/domain/useCase/AddAttenderUseCase.dart';
+import 'package:attend_recorder/di/DIModule.dart';
+import 'package:attend_recorder/domain/useCase/attendUseCase/AddAttenderUseCase.dart';
+import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:flutter/material.dart';
 
 class AddUserDialog extends StatefulWidget {
@@ -13,7 +14,7 @@ class AddUserDialog extends StatefulWidget {
 
 class _AddUserDialogState extends State<AddUserDialog> {
   final userNameController = TextEditingController();
-  bool _isLoading = false;
+  var addingUserState = ResultWrapper.idle();
   late AddAttenderUseCase addAttenderUseCase;
 
   @override
@@ -30,11 +31,11 @@ class _AddUserDialogState extends State<AddUserDialog> {
 
   Future _addUser(String user) async {
     setState(() {
-      _isLoading = true;
+      addingUserState = ResultWrapper.loading();
     });
-    await addAttenderUseCase.execute(user);
-    widget.onAdd(user);
-    Navigator.of(context, rootNavigator: true).pop(context);
+
+    addingUserState = await addAttenderUseCase.execute(user);
+    setState(() {});
   }
 
   @override
@@ -44,33 +45,74 @@ class _AddUserDialogState extends State<AddUserDialog> {
       child: Card(
         child: Container(
           margin: const EdgeInsets.all(8),
-          child: !_isLoading
-              ? Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextField(
-                      controller: userNameController,
-                    ),
-                    Row(
-                      children: [
-                        OutlinedButton(
-                          onPressed: () => {
-                            _addUser(userNameController.text),
-                          },
-                          child: const Text("Add"),
-                        ),
-                        TextButton(
-                            onPressed: () =>
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop(context),
-                            child: const Text("Cancel"))
-                      ],
-                    )
-                  ],
-                )
-              : const CircularProgressIndicator(),
+          child: addingUserState.when(
+              success: (data) {
+                Future.delayed(const Duration(seconds: 1), () {
+                  widget.onAdd(userNameController.text);
+                  Navigator.of(context, rootNavigator: true).pop(context);
+                });
+                return const Wrap(
+                    alignment: WrapAlignment.center, children: [Text("Done")]);
+              },
+              loading: () => _loadingState(),
+              idle: () => _idleState(),
+              error: (error) => _errorState(error)),
         ),
       ),
+    );
+  }
+
+  Widget _idleState() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        TextField(
+          controller: userNameController,
+        ),
+        Row(
+          children: [
+            OutlinedButton(
+              onPressed: () => {
+                _addUser(userNameController.text),
+              },
+              child: const Text("Add"),
+            ),
+            TextButton(
+                onPressed: () =>
+                    Navigator.of(context, rootNavigator: true).pop(context),
+                child: const Text("Cancel"))
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _errorState(error) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(error),
+        Row(
+          children: [
+            OutlinedButton(
+              onPressed: () => _addUser(userNameController.text),
+              child: const Text("Retry"),
+            ),
+            TextButton(
+              onPressed: () =>
+                  Navigator.of(context, rootNavigator: true).pop(context),
+              child: const Text("Cancel"),
+            )
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _loadingState() {
+    return const Wrap(
+      alignment: WrapAlignment.center,
+      children: [CircularProgressIndicator()],
     );
   }
 }

@@ -1,4 +1,4 @@
-import '../repository/AttendanceRepo.dart';
+import '../../repository/AttendanceRepo.dart';
 
 class SetWorkSheetLabelUseCase {
   SetWorkSheetLabelUseCase(this.attendRepo);

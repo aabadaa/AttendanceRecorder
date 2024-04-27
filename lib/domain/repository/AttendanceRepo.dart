@@ -16,9 +16,9 @@ abstract class AttendRepository {
 
   Future<ResultWrapper<List<AttenderState>>> getAttendersState(DateTime day);
 
-  Future<void> addAttender(String user);
+  Future<ResultWrapper<void>> addAttender(String user);
 
-  Future<void> removeAttender(String user);
+  Future<ResultWrapper<void>> removeAttender(String user);
 
-  Future<void> setState(AttenderState user, DateTime day);
+  Future<ResultWrapper<void>> setState(AttenderState user, DateTime day);
 }

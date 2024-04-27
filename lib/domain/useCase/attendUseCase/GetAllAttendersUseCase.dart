@@ -1,6 +1,6 @@
 import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 
-import '../repository/AttendanceRepo.dart';
+import '../../repository/AttendanceRepo.dart';
 
 class GetAllAttendersUseCase {
   GetAllAttendersUseCase(this.attendRepo);

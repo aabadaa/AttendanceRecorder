@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'AddUserDialog.dart';
+import 'RemoveAttenderCubit.dart';
 
 class UsersScreen extends StatelessWidget {
   const UsersScreen({super.key});
@@ -44,24 +45,40 @@ class UsersScreen extends StatelessWidget {
   void _onUserClicked(BuildContext context, String user) {
     showDialog(
       context: context,
-      builder: (cxt) => AlertDialog(
-        title: Text("Remove: $user"),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              context
-                  .read<AttendStateCubit>()
-                  .removeAttenderUseCase
-                  .execute(user);
-              Navigator.of(cxt).pop();
-            },
-            child: const Text("Delete"),
-          ),
-          TextButton(
-              onPressed: () => Navigator.of(cxt).pop(),
-              child: const Text("Cancel"))
-        ],
+      builder: (cxt) => BlocProvider(
+        create: (_) => RemoveAttenderCubit(),
+        child: BlocBuilder<RemoveAttenderCubit, ResultWrapper>(
+          builder: (cxt, state) {
+            final normalWidget = Text("Remove: $user");
+            return AlertDialog(
+              title: state.when(
+                  idle: () => normalWidget,
+                  success: (data) {
+                    Future.delayed(
+                      const Duration(seconds: 3),
+                      () => Navigator.of(cxt).pop(),
+                    );
+                    return const Text("Done");
+                  },
+                  loading: () => const CircularProgressIndicator(),
+                  error: (error) => Text(error)),
+              actions: state.isSuccess
+                  ? []
+                  : [
+                      ElevatedButton(
+                        onPressed: () {
+                          cxt.read<RemoveAttenderCubit>().removeAttender(user);
+                        },
+                        child: Text(!state.isError ? "Delete" : "Retry"),
+                      ),
+                      TextButton(
+                          onPressed: () => Navigator.of(cxt).pop(),
+                          child: const Text("Cancel"))
+                    ],
+            );
+          },
+        ),
       ),
-    );
+    ).then((value) => context.read<AttendStateCubit>().getUsers());
   }
 }
