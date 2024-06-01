@@ -98,8 +98,9 @@ class AttendRepoImpl extends AttendRepository {
     try {
       final out = await _safeAttendSheet.getAttendersState(day);
       return ResultWrapper.success(out);
-    } catch (e) {
+    } catch (e, stacktrace) {
       print(e);
+      print(stacktrace);
       return ResultWrapper.error(e);
     }
   }
@@ -109,8 +110,9 @@ class AttendRepoImpl extends AttendRepository {
     try {
       await _safeAttendSheet.addAttender(user);
       return Future(() => ResultWrapper.success(null));
-    } catch (e) {
+    } catch (e, stacktrace) {
       print(e);
+      print(stacktrace);
       return Future(() => ResultWrapper.error(e));
     }
   }

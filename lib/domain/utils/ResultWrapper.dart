@@ -29,7 +29,7 @@ class ResultWrapper<T> {
     } else if (loading != null && isLoading) {
       return loading();
     } else if (error != null && isError) {
-      return error(error);
+      return error(this.error);
     } else if (idle != null) {
       return idle();
     }

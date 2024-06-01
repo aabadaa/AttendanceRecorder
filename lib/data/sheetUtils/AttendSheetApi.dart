@@ -36,7 +36,7 @@ class AttendSheetApi {
   }
 
   Future<List<AttenderState>> getAttendersState(DateTime dateTime) async {
-    print("getAttendersState");
+    print("getAttendersState::");
     final allDates = await _attendSheet!.values.column(1).then((value) {
       value.removeAt(0);
       return Future.value(value
@@ -55,8 +55,9 @@ class AttendSheetApi {
       return getAttendersState(dateTime);
     }
     final users = await getAttenders();
+    print("suers $users");
     final List<DateTime?> states = await _attendSheet!.values
-        .row(timeIndex, length: users.length)
+        .row(timeIndex, length: users.length + 1)
         .then((list) {
       print("attend row $list");
       list.removeAt(0);
@@ -69,6 +70,7 @@ class AttendSheetApi {
       final userState = i >= states.length ? null : states[i];
       out.add(AttenderState(name: userName, attendDate: userState));
     }
+    print("out $out");
     return Future.value(out);
   }
 

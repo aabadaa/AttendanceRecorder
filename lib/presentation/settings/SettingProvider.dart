@@ -7,7 +7,6 @@ import 'package:attend_recorder/domain/useCase/sheetUseCase/SetSheetIdUseCase.da
 import 'package:attend_recorder/domain/useCase/sheetUseCase/SetWorkSheetLabelUseCase.dart';
 import 'package:attend_recorder/domain/utils/ResultWrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:gsheets/gsheets.dart';
 
 class SettingProvider with ChangeNotifier {
   SettingProvider(
@@ -46,9 +45,8 @@ class SettingProvider with ChangeNotifier {
       _workLabels = _getAllWorkSheetUseCase.execute().when(
             success: (data) => data ?? List.empty(),
           )!;
-    } on GSheetsException {
-      return Future.value(ResultWrapper.error(Exception("Permission denied")));
-    } catch (e) {
+    } catch (e, stacktrace) {
+      print(stacktrace);
       errorState = e as Exception;
     } finally {
       _isLoading = false;

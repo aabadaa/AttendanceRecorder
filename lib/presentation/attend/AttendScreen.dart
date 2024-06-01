@@ -19,28 +19,23 @@ class _AttendScreenState extends State<AttendScreen> {
   SetAttendStateUseCase setAttendStateUseCase = getIt();
 
   ResultWrapper<List<AttenderState>> users = ResultWrapper.idle();
-  bool _isLoading = false;
   DateTime? selectedDay;
 
   Future<void> getAttendersState(DateTime selectedDate) async {
     setState(() {
-      _isLoading = true;
+      users = ResultWrapper.loading();
     });
     users = await getAllAttendStateUseCase.execute(selectedDate);
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() {});
   }
 
   Future<void> changeAttenderState(AttenderState attenderState) async {
     setState(() {
-      _isLoading = true;
+      users = ResultWrapper.loading();
     });
     await setAttendStateUseCase.execute(attenderState, selectedDay!);
     users = await getAllAttendStateUseCase.execute(selectedDay!);
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() {});
   }
 
   Future selectDate() async {
@@ -63,41 +58,35 @@ class _AttendScreenState extends State<AttendScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(
-        child: Placeholder(),
-      );
-    } else {
-      return Scaffold(
-        body: users.when(
-            success: (users) => RefreshIndicator(
-                  onRefresh: () => getAttendersState(selectedDay!),
-                  child: ListView.builder(
-                    itemBuilder: (cxt, index) => AttenderWidget(
-                      user: users![index],
-                      onClick: () => changeAttenderState(users[index]),
-                    ),
-                    itemCount: users?.length,
+    return Scaffold(
+      body: users.when(
+          success: (users) => RefreshIndicator(
+                onRefresh: () => getAttendersState(selectedDay!),
+                child: ListView.builder(
+                  itemBuilder: (cxt, index) => AttenderWidget(
+                    user: users![index],
+                    onClick: () => changeAttenderState(users[index]),
                   ),
+                  itemCount: users?.length,
                 ),
-            loading: () => const Center(
-                  child: CircularProgressIndicator(),
+              ),
+          loading: () => const Center(
+                child: CircularProgressIndicator(),
+              ),
+          error: (error) => Center(
+                child: Column(
+                  children: [
+                    Text(error.toString()),
+                    ElevatedButton(
+                        onPressed: () => getAttendersState(selectedDay!),
+                        child: const Text("Retry"))
+                  ],
                 ),
-            error: (error) => Center(
-                  child: Column(
-                    children: [
-                      Text(error.toString()),
-                      ElevatedButton(
-                          onPressed: () => getAttendersState(selectedDay!),
-                          child: const Text("Retry"))
-                    ],
-                  ),
-                )),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: selectDate,
-          label: const Text("Select Date"),
-        ),
-      );
-    }
+              )),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: selectDate,
+        label: const Text("Select Date"),
+      ),
+    );
   }
 }

@@ -64,8 +64,7 @@ class _SettingsWidgetState extends State<SettingsWidget> {
                     ),
                     ElevatedButton(
                       onPressed: () {
-                        showSnackBar(
-                            settingProvider.setSheetId(sheetIdController.text));
+                        settingProvider.setSheetId(sheetIdController.text);
                       },
                       child: const Text("Save"),
                     ),

@@ -91,7 +91,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(error),
+        Text(error.toString()),
         Row(
           children: [
             OutlinedButton(
